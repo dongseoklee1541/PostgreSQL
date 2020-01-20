@@ -67,8 +67,123 @@ FROM
 ```
 <img src="https://www.postgresqltutorial.com/wp-content/uploads/2019/05/postgresql-select-with-expression-example.png">
 
+* SELECT only expression example
+```
+SELECT 5 * 3 AS result;
+```
+<img src="https://www.postgresqltutorial.com/wp-content/uploads/2019/05/postgresql-select-with-an-expression-only.png">
+
+----
+
+## PostgreSQL ORDER BY
+
+ORDER BY를 통해서 반환되는 값들을 정렬 할 수 있다.
+
+```
+SELECT
+   column_1,
+   column_2
+FROM
+   table_name
+ORDER BY
+   column_1 [ASC   DESC],
+   column_2 [ASC   DESC];
+```
+> ORDER BY는 쉼표를 사용해서 열 별로 구별 및 지정을 할 수 있고, 오름차순(ASC)과 내림차순(DESC)를 사용할 수 있다. 기본값은 ASC 이다.
+
+* ORDER BY sort rows by one column
+```
+SELECT
+   first_name,
+   last_name
+FROM
+   customer
+ORDER BY
+   first_name (ASC);
+```
+
+* ORDER BY sort rows by multiple columns
+
+오름차순으로 이름을 기준으로 고객을 정렬하고, 성을 기준으로 정렬된 결과 집합을 내림차순으로 정렬하는 경우
+
+```
+SELECT
+   first_name,
+   last_name
+FROM
+   customer
+ORDER BY
+   first_name ASC,
+   last_name DESC;
+```
+
+* ORDER BY sort rows by expression
+
+LENGTH() 를 사용하여, 문자열을 받아서 그 길이를 반환하는 칼럼을 만든다.
+
+```
+SELECT 
+   first_name,
+   LENGTH(first_name) len
+FROM
+   customer
+ORDER BY 
+   LENGTH(first_name) DESC;
+```
+
+## PostgreSQL SELECT DISTINCT
+
+DISTINCT는 SELECT 문에서 중복 rows를 제거하기 위해 사용된다. DISTINCT는 각 그룹에 대한 row를 하나씩만 남겨 놓는다. 
+DISTINCT 절은 테이블의 하나 이상의 columns 을 대상으로 할 수 있다.
+
+```
+SELECT
+   DISTNCT column_1, column_2
+FROM
+   table_name;
+```
+column_1,2의 값은 중복을 확인하는데 사용 된다.
+
+```
+SELECT
+   DISTINCT ON (column_1) column_alias,
+   column_2
+FROM
+   table_name
+ORDER BY
+   column_1,
+   column_2;
+```
+
+DISTINCT ON (expression)은 중복 값들의 첫번째 항을 보여준다. 하지만 순서는 예측할 수 없이 랜덤하게 뽑으므로 ORDER BY 를 함께 사용하는 것이 좋다.
+
+* PostgreSQL SELECT DISTINCT ex)
+실습에 사용될 테이블을 만든다.
+
+```
+CREATE TABLE t1 (
+   id serial NOT NULL PRIMARY KEY,
+   bcolor VARCHAR,
+   fcolor VARCHAR);
+   
+INSERT INTO t1 (bcolor, fcolor)
+VALUES
+   ('red', 'red'),
+   ('red', 'red'),
+   ('red', NULL),
+   (NULL, 'red'),
+   ('red', 'green'),
+   ('red', 'blue'),
+   ('green', 'red'),
+   ('green', 'blue'),
+   ('green', 'green'),
+   ('blue', 'red'),
+   ('blue', 'green'),
+   ('blue', 'blue');
+```
+
 
 
 ----
 
-https://www.postgresqltutorial.com/postgresql-select/
+https://www.postgresqltutorial.com/postgresql-select
