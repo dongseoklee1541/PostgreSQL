@@ -182,7 +182,21 @@ VALUES
    ('blue', 'blue');
 ```
 
+* PostgreSQL DISTINCT ON ex)
+```
+SELECT
+   DISTINCT ON
+   (bcolor) bcolor,
+   fcolor
+FROM
+   t1
+ORDER BY
+   bcolor,
+   fcolor;
+```
 
+<img src="https://www.postgresqltutorial.com/wp-content/uploads/2019/05/PostgreSQL-SELECT-DISTINCT-ON-example.png">
+DISTINCT ON에 해당하는 칼럼을 기준으로 첫번째로 나오는 ROW들만 반환한다.
 
 ----
 
