@@ -235,4 +235,20 @@ her 앞에는 한글자만 들어오고, 뒤의 글자수는 제한이 없는 �
 LIKE는 대소문자 구별을 하지만, ILIKE 연산자는 대소문자를 구별하지 않고, 값을 일치 시킨다.
 
 
-## PostgreSQL IS NULL
+## PostgreSQL IS (NOT) NULL
+
+IS NULL은 값이 NULL 인지 아닌지 체크하는 연산자이다. 
+
+```
+WHERE phone = NULL; # 아무것도 반환하지 않는다. NULL과 동일하다는 연산자는 항상 false를 반환하기 때문이다.
+WHERE pohne IS NULL; # NULL 인지 아닌지 체크하는 연산자 이므로 NULL 인 값들만 반환
+``` 
+
+## PostgreSQL Alias
+
+쿼리문안에서 특정 column을 'AS'를 사용하여 임시로 이름을 할당 할 수 있다. 이렇게 할당된 임시 이름은 쿼리문이 실행 중에만 존재한다.
+
+```
+SELECT column_name AS alias_name
+FROM table;
+```
