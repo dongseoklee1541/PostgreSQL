@@ -185,7 +185,7 @@ WHERE
    );
 ```
 
-## PostgreSQL BETWEEN
+# PostgreSQL BETWEEN
 
 BETWEEN은 사이 값을 추출할때 사용하는 WHERE문의 조건문이다. WHERE 절에 있는 SELECT, INSERT, UPDATE or DELETE 와 자주 사용된다.
 ```
@@ -211,7 +211,7 @@ AND '2007-02-15';
 ```
 날짜의 범위에 대한 값을 사용하려면 YYYY-MM-DD 의 리터럴 날짜를 사용해야 한다.
 
-## PostgreSQL (NOT) LIKE
+# PostgreSQL (NOT) LIKE
 
 LIKE문은 WHERE 조건문에 사용되는 절이며, 검색한 값과 비슷한 결과를 얻고자 할때 사용 되며, 특별한 와일드카드가 제공된다.
 > % 를 사용하여 문자의 순서를 정할 수 있다.
@@ -231,7 +231,7 @@ WHERE
 ```
 her 앞에는 한글자만 들어오고, 뒤의 글자수는 제한이 없는 조건이다.
 
-### PostgreSQL ILIKE
+## PostgreSQL ILIKE
 LIKE는 대소문자 구별을 하지만, ILIKE 연산자는 대소문자를 구별하지 않고, 값을 일치 시킨다.
 
 
@@ -244,7 +244,7 @@ WHERE phone = NULL; # 아무것도 반환하지 않는다. NULL과 동일하다�
 WHERE pohne IS NULL; # NULL 인지 아닌지 체크하는 연산자 이므로 NULL 인 값들만 반환
 ``` 
 
-## PostgreSQL Alias
+# PostgreSQL Alias
 
 쿼리문안에서 특정 column을 'AS'를 사용하여 임시로 이름을 할당 할 수 있다. 이렇게 할당된 임시 이름은 쿼리문이 실행 중에만 존재한다.
 
