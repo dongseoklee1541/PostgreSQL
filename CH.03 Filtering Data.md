@@ -249,6 +249,18 @@ WHERE pohne IS NULL; # NULL 인지 아닌지 체크하는 연산자 이므로 NU
 쿼리문안에서 특정 column을 'AS'를 사용하여 임시로 이름을 할당 할 수 있다. 이렇게 할당된 임시 이름은 쿼리문이 실행 중에만 존재한다.
 
 ```
-SELECT column_name AS alias_name
-FROM table;
+SELECT a_very_long_table_name.column_name
+FROM a_very_long_table_name;
 ```
+위와 같이 테이블의 이름이 길 경우 as를 활용하면 편하게 사용할 수 있다.
+
+```
+SELECT t.column_name
+FROM a_very_long_table_name t; # 할당한 임시 이름을 SELECT 문에서 바로 활용하는 쿼리문
+```
+
+
+-----
+
+https://www.postgresqltutorial.com/postgresql-where/
+
