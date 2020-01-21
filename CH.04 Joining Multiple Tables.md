@@ -138,7 +138,112 @@ AND f1.length = f2.length;
 
 ## PostgreSQL FULL OUTER JOIN
 
-    
+FULL OUTER JOIN은 left join 과 right join의 결과물의 결합이다. 즉 두 테이블의 일치하는 행과 일치하지 않는 행 모두 결과에 나타난다.
+```
+SELECT * FROM A
+FULL [OUTER] JOIN B on A.id = B.id; # OUTER는 옵션이다.
+```
+
+```
+SELECT
+   employee_name,
+   department_name
+FROM
+   employees e
+FULL OUTER JOIN departments d ON d.department_id = e.department_id; # 이 경우 서로 공통되지 않는 ROW도 반환된다.
+(WHERE employee_name[또는 d.department_id] IS NULL;) # 피고용자가 없는 부서[또는 부서가 없는 피고용자]를 검색하는 방법
+```
+
+```
+  employee_name  | department_name
+-----------------+-----------------
+ Bette Nicholson | Sales
+ Christian Gable | Sales
+ Joe Swank       | Marketing
+ Fred Costner    | HR
+ Sandra Kilmer   | IT
+ Julia Mcqueen   | NULL # NULL 인 값도 같이 나타난다.
+ NULL            | Production
+(7 rows)
+```
+
+## PostgreSQL Cross Join By Example
+
+CROSS JOIN 을 사용해서 두개 이상의 테이블에 행이 있는 데카르트 곱(곱집합,cartesian product)를 만들 수 있다. cross join은
+left join과 inner join처럼 join하는 데 있어서 조건이 없는 특징이 있다.
+
+```
+SELECT *
+FROM T1
+CROSS JOIN T2;
+```
+```
+SELECT *
+FROM T1, T2;
+```
+만약 조건이 true 라면, INNER JOIN 절을 통해서도 CROSS JOIN을 할 수 있다.
+```
+SELECT *
+FROM T1
+INNER JOIN T2 ON TRUE;
+```
+
+* 예제
+
+```
+SELECT
+   *
+FROM
+   T1
+CROSS JOIN T2;
+```
+
+<src img="https://www.postgresqltutorial.com/wp-content/uploads/2016/06/PostgreSQL-CROSS-JOIN-illustration.png">
+
+## PostgreSQL NATURAL JOIN Explained By Examples
+
+naural join은 공통 열(common column) 이름을 기준으로 암시적 조인을 만드는 것이다.
+```
+SELECT *
+FROM T1
+NATRUAL [INNER, LEFT, RIGHT] JOIN T2;
+```
+natural join은 inner/left/right join 모두 될 수 있고, 따로 명시하지 않는 한 기본값은 INNER JOIN이다.
+
+> 만약 위의 예시처럼 SELECT * 를 사용한다면 양 테이블에 같은 이름인 열과 아닌 열들 모두 불러온다.
+
+* 예제
+
+```
+CREATE TABLE categories (
+   category_id serial PRIMARY KEY,
+   category_name VARCHAR (255) NOT NULL
+);
+ 
+CREATE TABLE products (
+   product_id serial PRIMARY KEY,
+   product_name VARCHAR (255) NOT NULL,
+   category_id INT NOT NULL,
+   FOREIGN KEY (category_id) REFERENCES categories (category_id)
+);
+```
+
+products 테이블의 category_id는 외래키로 categories 테이블의 기본키를 참조하고 있다. 그래서 category_id는 natrual join의 
+공통 열(common column)이다.
+
+```
+SELECT
+   *
+FROM
+   products
+NATURAL JOIN categories; # INNER JOIN categories USING (category_id); 와 동일한 결과가 나온다.
+```
+
+NATURAL JOIN은 INNER JOIN과 다르게 조건(USING category_id)을 따로 사용하지 않아도 되는데, 이는 공통 열을 기준으로 join하기 때문이다.
+
+
+
+
 ----
 
 출처 : https://theartofpostgresql.com/blog/2019-09-sql-joins/
