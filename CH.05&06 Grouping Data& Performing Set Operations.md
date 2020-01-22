@@ -85,3 +85,67 @@ HAVING
 ```
 위에서 언급한 대로 SELECT 문에서 집계함수를 사용한 녀석들을 HAVING 절에서 조건으로 사용할 수 있다.
 
+----
+
+
+# PostgreSQL UNION
+
+UNION 은 두개나 셋이상의 SELECT 문의 결과를 하나로 묶어 준다. 
+```
+SELECT
+   column_1,
+   column_2
+FROM
+   tbl_name_1
+UNION
+SELECT
+   column_1,
+   column_2
+FROM
+   tbl_name_2;
+```
+> 양 쿼리는 같은 칼럼의 숫자를 반환해야 한다.
+> 쿼리의 해당 열에는 호환 가능한 데이터 타입을 갖고 있어야 한다.
+
+UNION 은 UNION ALL 을 사용하지 않으면 중복된 rows는 삭제한다.
+
+* PostgreSQL UNION 예시
+
+<img src="https://www.postgresqltutorial.com/wp-content/uploads/2013/05/sales2007q1.png">
+
+> sales 2007q1
+
+<img src="https://www.postgresqltutorial.com/wp-content/uploads/2013/05/sales2007q2.png">
+
+> sales 2007q2
+
+```
+SELECT *
+FROM
+   sales2007q1
+UNION (ALL) # ALL을 사용하면 중복으로 삭제된 mary 열이 두번 반복된다.
+SELECT *
+FROM
+   sales2007q2;
+```
+
+<img src="https://www.postgresqltutorial.com/wp-content/uploads/2013/05/PostgreSQL-UNION-ALL-result.png">
+
+* PostgreSQL UNION with ORDER BY
+
+```
+SELECT *
+FROM
+   sales2007q1
+UNION ALL
+SELECT *
+FROM
+   sales2007q2
+ORDER BY 
+ name ASC,
+ amount DESC;
+```
+UNION 을 사용하는 경우, 모든 쿼리의 맨 마지막부분에서 ORDER BY를 사용해야 예상한 결과가 나올 것이다.
+
+## PostgreSQL INTERSECT Operator
+
