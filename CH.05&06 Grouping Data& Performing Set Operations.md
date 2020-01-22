@@ -149,3 +149,91 @@ UNION 을 사용하는 경우, 모든 쿼리의 맨 마지막부분에서 ORDER 
 
 ## PostgreSQL INTERSECT Operator
 
+PostgreSQL 에서는 UNION과 EXCEPT 처럼 INTERSECT 연산자는 두개 혹은 그 이상의 SELECT 문을 하나의 결과 셋으로 반환한다. INTERSECT는 
+각 테이블의 공통된 부분(교집합)을 반환한다.
+
+```
+SELECT
+  column_list
+FROM
+  A
+INTERSECT
+SELECT
+  column_list
+FROM
+  B;
+```
+
+> 각 SELECT 절에서 사용하는 행(칼럼)의 수와 순서는 동일해야 한다.
+> data types 은 호환 가능해야 한다.
+
+```
+SELECT
+   employee_id
+FROM
+   keys
+INTERSECT
+SELECT
+        employee_id
+FROM
+   hipos
+ORDER BY employee_id; 
+```
+INTERSECT 의 결과를 정렬하기 위해 ORDER BY 절은 맨 마지막에 사용해야 한다.
+
+## PostgreSQL EXCEPT Operator
+
+PostgreSQL 에서는 UNION과 INTERSECT 처럼 EXCEPT 연산자는 두개 혹은 그 이상의 SELECT 문을 하나의 결과 셋으로 반환한다. 
+
+메인테이블과 다른 테이블과 비교하여 공통인 부분(INTERSECT)을 제외한 메인테이블 부분만 반환한다.
+
+```
+SELECT column_list
+FROM A
+WHERE condition_a
+EXCEPT
+SELECT colum_list
+FROM B
+WHERE condition_b;
+```
+
+<img src="https://www.postgresqltutorial.com/wp-content/uploads/2016/06/PostgreSQL-EXCEPT.png">
+
+> 각 SELECT 절에서 사용하는 열(칼럼)의 수와 순서는 동일해야 한다.
+> data types 은 각각의 열(칼럼)에 호환 가능해야 한다.
+
+* 예시
+
+```
+SELECT
+  distinct inventory.film_id,
+  title
+FROM
+  inventory
+INNER JOIN film ON film.film_id = inventory.film_id
+ORDER BY title;
+```
+
+인벤토리에 있는 영화들을 반환한다. 여기서 인벤토리에 있는 필름을 가져오기 위해선 어떻게 해야 할까?
+
+```
+SELECT
+	film_id,
+	title
+FROM
+	film
+EXCEPT
+	SELECT
+		DISTINCT inventory.film_id,
+		title
+	FROM
+		inventory
+	INNER JOIN film ON film.film_id = inventory.film_id
+ORDER BY title;
+```
+
+문장 끝에 ORDER BY 절을 배치해야 예상한대로 나오게 된다. EXCEPT 전, 즉 하나의 쿼리가 끝나는 순간 정렬을 하면 최종 결과에 정렬이 반영되지 않는다.
+
+----
+
+출처 : https://www.postgresqltutorial.com/
