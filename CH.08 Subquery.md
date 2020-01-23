@@ -130,3 +130,87 @@ X <> ANY (a,b,c)
 ```
 x <> a OR x <> b OR x <> c
 ```
+
+## PostgreSQL ALL Operator
+
+PostgreSQL ALL 연산자는 서브쿼리에서 반환되는 값 목록들을 바탕으로 쿼리를 할 수 있다.
+
+```
+comparison_operator ALL (subquery)
+```
+
+> ALL 연산자 앞에는 비교 연산자가 있어야 한다.(=,!=,>,<,<=)
+> ALL 연산자는 괄호로 둘러 싸여진 서브쿼리가 뒤따라야 한다.
+
+서브쿼리가 행을 반환한다면, ALL 연산자는 비교 연산자를 기준으로 true, false 를 반환한다.
+서브쿼리가 행을 반환하지 않는 경우, ALL 연산자는 항상 true로 평가한다.
+
+* 예시
+
+평균 길이 목록보다 길이가 긴 필름들을 찾는다면, ALL 연산자에서 ">" 를 사용해야 한다.
+```
+SELECT
+    film_id,
+    title,
+    length
+FROM
+    film
+WHERE
+    length > ALL (
+            SELECT
+                ROUND(AVG (length),2)
+            FROM
+                film
+            GROUP BY
+                rating
+    )
+ORDER BY
+    length;
+```
+
+## PostgreSQL EXISTS
+
+EXISTS 연산자는 서브쿼리의 존재하는 열들을 테스트 하기 위한 연산자다.
+
+```
+EXISTS (subquery)
+```
+
+EXISTS는 서브쿼리의 값들을 그대로 받아서, 서브쿼리가 하나 이상의 행을 반환하면 true, 반환하지 않는다면 false이다.
+
+EXISTS는 종종 상관 관계가 있는 서브쿼리와 함께 사용된다. 또한 EXISTS 의 결과는 서브쿼리에서 행의 반환여부 이므로 서브쿼리의 SELECT문에서 선택하는
+열은 크게 중요하지 않다.
+
+```
+SELECT first_name,
+       last_name
+FROM customer c
+WHERE [NOT] EXISTS
+    (SELECT 1 # EXISTS에서 SELECT 는 중요하지 않기에 1 만 쓰고 끝.
+     FROM payment p
+     WHERE p.customer_id = c.customer_id
+       AND amount >= 11 )
+ORDER BY first_name,
+         last_name;
+```
+
+고객중 적어도 11번 이상 빌린 고객들을 뽑아내는 subquery를 EXISTS 문을 통해서 true, false를 반환하여 고객들의 이름을 반환하는 쿼리문이다
+
+* NOT EXISTS는 EXISTS 의 반대 결과를 반환한다.
+
+### EXISTS and NULL
+
+서브쿼리에서 NULL을 반환하면, EXISTS는 true를 반환한다.
+
+```
+SELECT first_name,last_name
+FROM customer
+WHERE EXISTS(SELECT NULL)
+ORDER BY
+	first_name, last_name;
+```
+
+<img src="https://www.postgresqltutorial.com/wp-content/uploads/2017/08/PostgreSQL-EXIST-with-NULL-example.png">
+
+위와 같이 SELECT 문에 NULL이 있어도 EIXSTS절이 true 로 인식하여 반환된다.
+
