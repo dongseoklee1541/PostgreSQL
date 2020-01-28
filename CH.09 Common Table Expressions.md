@@ -82,9 +82,70 @@ FROM staff s
 
 ```
 WITH RECUSERIVE cte_name(
-  CTE_query_definition
+  CTE_query_definition --- non recursive term
   UNION [ALL]
-  CTE_query definition
+  CTE_query definition --- recursive term
 ) SELECT * FROM cte_name;
 ```
+
+재귀 CTE는 다음과 같이 세가지 요소가 있다.
+
+> non-recursive term : CTE 구조의 결과 집합에 대한 정의다.
+
+> Recursive term : non-recursive term 과 JOIN 또는 UNION (ALL)을 활용해 연결되어 사용되는 녀석, Recursive term은 CTE 이름 자체를 참조한다.
+
+> 종료 체크(terminal check) : 이전의 반복(previous itertation)에서 행이 반환되지 않으면 재귀는 멈춘다.
+
+
+PostgreSQL 은 다음과 같은 방식으로 재귀를 실행한다.
+
+> 첫째, 재귀가 아닌 항(non-recursive term)에서 기준 결과를 만든다.(R0)
+> 둘째, 재귀 항(recursive term)을 Ri를 인풋값으로 반복하고, 결과 집합을 Ri + 1 출력으로 보낸다.
+> 셋째, 반환 값이 없을때까지 두번째를 반복한다.(terminal check)
+> 결과 집합(R0, R1, ..., Rn)의 UNION or UNION ALL을 한 것을 최종 결과 값으로 반환한다.
+
+* 재귀 쿼리 예시
+
+```
+WITH RECURSIVE subordinates AS (
+   SELECT
+      employee_id,
+      manager_id,
+      full_name
+   FROM
+      employees
+   WHERE
+      employee_id = 2
+   UNION
+      SELECT
+         e.employee_id,
+         e.manager_id,
+         e.full_name
+      FROM
+         employees e
+      INNER JOIN subordinates s ON s.employee_id = e.manager_id
+) SELECT
+   *
+FROM
+   subordinates;
+```
+
+UNION 위의 절에서 subordinates 를 정의하는 non-recursive term을 시작한다. 이후 재귀를 하는 테이블인 employees를 통해서 UNION 이하 절에서 반복한다. 언제까지? 반환되는 rows가 없을때까지.
+
+```
+ employee_id | manager_id |    full_name
+-------------+------------+-----------------
+           2 |          1 | Megan Berry
+           6 |          2 | Bella Tucker
+           7 |          2 | Ryan Metcalfe
+           8 |          2 | Max Mills
+           9 |          2 | Benjamin Glover
+          16 |          7 | Piers Paige
+          17 |          7 | Ryan Henderson
+          18 |          8 | Frank Tucker
+          19 |          8 | Nathan Ferguson
+          20 |          8 | Kevin Rampling
+(10 rows)
+```
+첫번째 subordinates 였던 eployee_id 가 2인 경우 6,7,8,9를 반환시켜줬고 반환된 숫자를 통해서 16,17,18,19,20을 반환할 수 있었다. 하지만 이번에 반환된 숫자들 중 manager_id에 포함된 경우가 없어서 재귀는 종료된다.
 
