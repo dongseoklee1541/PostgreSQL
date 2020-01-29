@@ -33,19 +33,39 @@ Chapter
 * Cross Join
 * Natural Join
 
-## 1. Getting Started with PostgreSQL
+## 5. Grouping Data
+* Group By
+* Having
 
-## 1. Getting Started with PostgreSQL
+## 6. Performing Set Operations
+* UNION
+* INTERSECT
+* EXCEPT
 
-## 1. Getting Started with PostgreSQL
+## 7. Grouping Sets
+* Grouping Sets
+* Cube
+* Rollup
 
-## 1. Getting Started with PostgreSQL
+## 8. Subquery
+* Subquery
+* ANY
+* ALL
+* EXISTS
 
-## 1. Getting Started with PostgreSQL
+## 9. Common Table Expressions
+* PostgreSQL CTE
+* Recursive query using CTEs
 
-## 1. Getting Started with PostgreSQL
+## 10. Modifying Data
+* INSERT
+* UPDATE
+* UPDATE JOIN
+* DELETE
+* UPSERT
 
-## 1. Getting Started with PostgreSQL
+## 11. Transactions
+* PostgreSQL Transactions
 
 ## 1. Getting Started with PostgreSQL
 
