@@ -231,7 +231,7 @@ PostgreSQL 에서는 INSERT문에서 upsert하는 것을 지원하기 위해서 
 
 * target 에 들어올 수 있는 것들
   * (column_name) : 열 이름
-  * ON CONSTRAIN constraint_name : 
+  * ON CONSTRAIN constraint_name : constraint_name 이 UNIQUE 인 경우를 파악,
   * WHERE predicate : 
   
 * action 에 들어 갈 수 있는 것들
@@ -243,3 +243,72 @@ PostgreSQL 에서는 INSERT문에서 upsert하는 것을 지원하기 위해서 
 'Microsoft'의 메일을 'contact@microsoft.com' 을 'hotline@microsoft.com'으로 바꾸는 것은 INSERT ON CONFLICT를 사용하면 가능하다.(UPDATE도 물론
 가능 하지만, 된다는걸 보여주기 위해서)
 
+우선 customers 테이블을 만들자.
+
+```
+CREATE TABLE customers (
+   customer_id serial PRIMARY KEY,
+   name VARCHAR UNIQUE,
+   email VARCHAR NOT NULL,
+   active bool NOT NULL DEAFULT TRUE
+);
+```
+
+여기서 name 이 UNIQUE인 것을 주목해야 한다.
+
+```
+INSERT INTO customers (NAME, email)
+VALUES
+   ('IBM', 'contact@ibm.com'),
+   (
+      'Microsoft',
+      'contact@microsoft.com'
+   ),
+   (
+      'Intel',
+      'contact@intel.com'
+   );
+```
+여기서 Microsoft의 이메일 값을 바꿔보자.
+
+```
+INSERT INTO customers (NAME, email)
+VALUES
+   (
+      'Microsoft',
+      'hotline@microsoft.com'
+   ) 
+ON CONFLICT ON CONSTRAINT customers_name_key 
+DO NOTHING;
+```
+
+기존에 MIcrosoft 라는 중복값이 존재해(ON CONFLICT ON CONSTRAINT ... )서 DO NOTHING 이 실행된다. 결과적으로 아무런 변화가 없다.
+
+```
+INSERT INTO customers (name, email)
+VALUES
+   (
+      'Microsoft',
+      'hotline@microsoft.com'
+   ) 
+ON CONFLICT (name) 
+DO NOTHING;
+```
+
+위와 마찬가지로, 기존에 존재하는 이름으로(ON CONFLICT (name)) DO NOTHING이 실행된다. 이런 상황을 피하기 위해선 UPDATE문을 사용해야 한다.
+
+```
+INSERT INTO customers (name, email)
+VALUES
+   (
+      'Microsoft',
+      'hotline@microsoft.com'
+   ) 
+ON CONFLICT (name) 
+DO
+      UPDATE
+     SET email = EXCLUDED.email || ';' || customers.email;
+```
+
+* EXCLUDED.email : INSERT를 시도하는 데이터
+* customers.email : 기존에 저장된 데이터
