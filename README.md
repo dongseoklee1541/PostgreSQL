@@ -67,10 +67,20 @@ Chapter
 ## 11. Transactions
 * PostgreSQL Transactions
 
-## 1. Getting Started with PostgreSQL
+## 12. Import & Export Data
+* import CSV file into Table
+* Export PostgreSQL Table to CSV file
 
-## 1. Getting Started with PostgreSQL
+## 13. Managing Databases
+* CREATE Database
+* Alter Database
+* Rename Database
+* Drop Database
+* Copy Database
+* Get Database Object Sizes
 
-## 1. Getting Started with PostgreSQL
+## 14. Managing Tables
+* Data types
+
 
 ## 1. Getting Started with PostgreSQL
