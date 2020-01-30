@@ -171,4 +171,49 @@ db=# \conntect postgres;
 ```
 다른 데이터베이스에 접속함으로서, 자동으로 연결되어 있는 데이터베이스와의 연결이 끊긴다.
 
+```
+SELECT *
+FROM pg_stat_activity
+WHERE datname= 'db';
+```
 
+
+## PostgreSQL DROP DATABASE
+
+데이터베이스가 더이상 필요하지 않으면, **DROP DATABASE** 를 통해서 지울 수 있다. 
+```
+DROP DATABASE [IF EXISTS] name;
+```
+
+데이터베이스를 지우기 위해선
+> DROP DATABASE 뒤에 지우길 원하는 데이터베이스의 이름을 적고, 데이터베이스가 존재하지 않는 경우를 대비하여 IF EXISTS를 사용한다. 문제가 발생하면
+PostgreSQL이 알려준다.
+
+DROP DATABASE는 카테고리 전체와 데이터 디렉토리까지 영구적으로 지워버린다. 한번 실행하면 되돌릴 수 없으니 주의해야 한다.
+
+데이터베이스의 owner만이 DROP DATABASE를 실행할 수 있으며, 게다가 데이터베이스에 어떠한 접근이 있다면 DROP DATABASE를 실행 할 수 없다.
+그렇기에 데이터베이스를 삭제하기 위해선 다른 데이터베이스에 접속해 있어야 한다.(예를들어 postgresql) 
+
+PostgreSQL은 또한 데이터베이스를 지우도록 허락하는 dropdb 라는 유틸 프로그램을 제공한다. dropdb는 백그라운드에서 DROP DATABASE를 실행한다.
+
+### active connections 데이터베이스 삭제하기
+
+대상 데이터베이스에 대해 수행되는 작업을 찾는 쿼리를 pg_stat_activity 통해서 날릴 수있다. 
+```
+SELECT *
+FROM pg_stat_activity
+WHERE datname = 'target_database';
+```
+
+다음으로 쿼리로 발견한 active connections을 종료한다.
+
+```
+SELECT pg_terminate_backend (pg_stat_activity.pid)
+FROM pg_stat_activity
+WHERE pg_stat_activity.datname = 'target_database';
+```
+
+active connections이 없는것을 확인 한후 DROP DATABASE 를 통해서 삭제한다.
+```
+DROP DATABASE target_database;
+```
