@@ -217,3 +217,113 @@ active connections이 없는것을 확인 한후 DROP DATABASE 를 통해서 삭
 ```
 DROP DATABASE target_database;
 ```
+
+
+## PostgreSQL Copy Database Made Easy
+
+PostgreSQL에서는 데이터베이스를 복사는 방법으로, **CREATE DATABASE** 를 사용하여 쉽게 만들 수 있다.
+
+```
+CREATE TABLE dvdrental_test
+WITH TEMPLATE dvdrental;
+```
+
+dvdrental에서 dvdrental_test로 복사하는 방법이다.
+
+### Copy Database from a server to another
+
+PostgreSQL 데이터베이스 서버와 데이터베이스를 복사하는 방법은 여러가지가 있다. 데이터베이스의 사이즈가 너무 크고 데이터베이스 서버와의 연결이 느리면
+데이터베이스 소스를 파일로 덤프하고 그 파일을 원격서버에 복사한 다음 복원하는 방법이 있다.
+
+자세한 방법은 https://www.postgresqltutorial.com/postgresql-copy-database/ 참조.
+
+
+## How to Get Table, Database, Indexes, Tablespace, and Value Size in PostgreSQL
+
+### PostgreSQL table size
+
+특정 테이블의 크기를 알고 싶다면, **pg_relation_size()** 함수를 사용하자. 만약 dvdrental의 actor 테이블의 사이즈를 알고 싶다면?
+```
+select pg_relation_size('actor');
+```
+
+하지만 나오는 결과값은 읽기가 어렵다. 사람이 사용하는 kB, MB, GB 단위로 보고자 하면 **pg_size_pretty()** 를 사용하면 된다.
+```
+SELECT pg_size_pretty(pg_relation_size('actor'));
+```
+
+pg_relation_size() 함수는 테이블의 사이즈만 보여주고 index나 다른 객체들의 사이즈는 포함되지 않는다. 이러한 것들을 포함한 테이블의 사이즈를 알고
+싶다면, pg_total_relation_size() 함수를 사용하면 된다. 
+
+```
+SELECT
+	pg_size_pretty(
+		pg_total_relation_size('actor')
+	);
+```
+ 
+### PostgreSQL database size
+
+전체 데이터베이스의 크기를 알고 싶다면, **pg_database_size()** 를 사용하면 된다. 
+```
+SELECT
+  pg_size_pretty(
+    pg_database_size('dvdrental')
+  );
+```
+
+현재 데이터베이스 서버에 존재하는 각 데이터베이스의 크기를 알고 싶다면, 아래와 같이 실행하자.
+```
+SELECT
+	pg_database.datname,
+	pg_size_pretty(pg_database_size(pg_database.datname)) AS size
+	FROM pg_database;
+```
+
+### PostgreSQL indexes size
+
+테이블에 붙어있는 인덱스의 크기를 알기 위해선 **pg_indexes_size()** 를 사용하면 된다.
+
+pg_indexes_size는 OID 나 테이블의 이름을 매개변수로받고 테이블에 붙어있는 모든 인덱스의 디스크 사용량을 반환한다.
+
+```
+SELECT
+	pg_size_pretty(pg_indexes_size('actor'));
+```
+
+### PostgreSQL tablesapce size
+
+tablespace의 크기를 알기 위해선, **pg_tablespace_size()** 를 사용하면 된다. pg_tablespace_size는 테이블스페이스의 이름과 bytes 단위로
+사이즈를 반환한다.
+
+```
+SELECT
+	pg_size_pretty(pg_tablespace_size('pg_default'));
+```
+
+### PostgreSQL value size
+
+특정한 value 값을 저장하기 위해 얼만큼의 저장공간이 필요한지 알기 위해서 **pg_column_size()** 를 사용하면 된다.
+
+```
+dvdrental=# select pg_column_size(5::smallint);
+ pg_column_size
+----------------
+              2
+(1 row)
+ 
+ 
+dvdrental=# select pg_column_size(5::int);
+ pg_column_size
+----------------
+              4
+(1 row)
+ 
+ 
+dvdrental=# select pg_column_size(5::bigint);
+ pg_column_size
+----------------
+              8
+(1 row)
+```
+
