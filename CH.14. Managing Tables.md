@@ -576,7 +576,52 @@ temp table을 제거하는 것은 만드는것과 다르게 그냥 **DROP TABLE*
 DROP TABLE temp_table_name;
 ```
 
+## PostgreSQL Copy Table: A Step-by-Step Guide with Practical Examples
 
+table을 복사하기 위해서, 
+```
+CREATE TABLE new_table AS
+TABLE existing_table;
+[WITH NO DATA] # 데이터는 복사하지 않을때
+```
 
+테이블의 일부분만 복사하고 싶다면?
+```
+CREATE TABLE new_table AS 
+SELECT
+*
+FROM
+    existing_table
+WHERE
+    condition;
+```
 
+다만, 기존 테이블의 구조와 데이터는 복사해 오지만, 인덱스와 조건(Primary Key, UNIQUE 와 같은 것들)을 복사해오지 않는다.
+
+*
+```
+CREATE TABLE contacts(
+    id SERIAL PRIMARY KEY,
+    first_name VARCHAR NOT NULL,
+    last_name VARCHAR NOT NULL,
+    email VARCHAR NOT NULL UNIQUE
+);
+
+INSERT INTO contacts(first_name, last_name, email) 
+VALUES('John','Doe','john.doe@postgresqltutorial.com'),
+      ('David','William','david.william@postgresqltutorial.com');
+```
+
+위의 테이블을 복사하자.
+
+```
+CREATE TABLE contact_backup 
+AS TABLE contacts;
+```
+contact_backup 은 테이블의 구조와 값들은 잘 복사해 왔지만, PRIMARY KEY, UNIQUE 와 같은 조건들은 같이 가져오지 않는다. 후에 따로 추가 해줘야 한다.
+
+```
+ALTER TABLE contact_backup ADD PRIMARY KEY(id);
+ALTER TABLE contact_backup ADD UNIQUE(email);
+```
 
