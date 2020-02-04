@@ -81,6 +81,24 @@ Chapter
 
 ## 14. Managing Tables
 * Data types
+* Create table
+* Select Into & Create table as
+* Auto-increment column with SERIAL
+* Sequences 
+* Identity column
+* Alter table
+* Rename table
+* Add column
+* Drop column
+* Change column data type
+* Rename column
+* Drop table
+* Truncate table
+* Temporary table
+* Copy a table
 
-
-## 1. Getting Started with PostgreSQL
+## 17. Managing Schemas
+* Schema
+* Create Schema
+* Alter Schema
+* Drop Schema
